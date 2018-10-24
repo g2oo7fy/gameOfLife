@@ -2,23 +2,27 @@
 #include <vector>
 #include <random>
 #include <stdlib.h>
+#include <functional>
 
 using namespace std;
 
-typedef vector<vector<bool>> Matrix;
+typedef vector<vector<int>> Matrix;
 
-bool coin(){
+int coin(){
 	random_device r;
-	mt19937 random_engine{ r()};
-	bernoulli_distribution coin_distribution{0.5};
+	mt19937 engine{ r()};
+//	bernoulli_distribution coin_distribution{0.5};
+	uniform_int_distribution<int> d(0, 1);
+	auto generator = bind( d, engine );
 
-	return coin_distribution(random_engine);
+//	return coin_distribution(random_engine);
+	return generator();
 }
 
 
 void printVector( Matrix m ){
-	vector<vector<bool>>::iterator i;
-	vector<bool>::iterator j;
+	vector<vector<int>>::iterator i;
+	vector<int>::iterator j;
 	for ( i = m.begin() ; i < m.end() ; i++ ){
 		for ( j = (*i).begin() ; j < (*i).end() ; j++ ){
 			char c;
@@ -34,25 +38,34 @@ void printVector( Matrix m ){
 }
 
 Matrix randomMatrix( int n ){
-	vector<vector<bool>> m(n);
+	vector<vector<int>> m(n);
 	for ( int i = 0 ; i < n ; i++ ){
 		for ( int j = 0 ; j < n ; j++ ){
-			//bool b = rand() % 2;
-			bool b = coin();
+			int b = coin();
 			m[i].push_back(b);
 		}
 	}
 		
-
-	//Matrix m = {{ true }, {false}};
 	return m;
 }
 
-int main(){
-//	Matrix m = {{ 1, 0, 3 },
-//		{ 2, 1, 1 },
-//		{ 0, 1, 7 }};
+int matrixSum( Matrix m ){
+	vector<vector<int>>::iterator i;
+	vector<int>::iterator j;
+	int sum = 0;
+	for ( i = m.begin() ; i < m.end() ; i++ ){
+		for ( j = (*i).begin() ; j < (*i).end() ; j++ ){
+			sum += *j;
+		}
+	}
+	return sum;
+}
 
-	printVector( randomMatrix( 3 ));
+
+int main(){
+	Matrix m;
+	m = randomMatrix( 3 );
+	printVector( m );
+	cout << matrixSum( m ) << endl;
 	return 0;
 }
